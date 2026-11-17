@@ -102,6 +102,7 @@ def menu_admin():
                 input("Enter untuk kembali...")
             
             elif menu == "5. Logout":
+                storage.username_aktif = ""
                 print("\nTerima kasih dan sampai jumpa!.")
                 time.sleep(3)
                 break
