@@ -1,6 +1,7 @@
 import inquirer
 from prettytable import PrettyTable
-from storage import katalog, playlist, username_aktif, cari_lagu
+import storage 
+from storage import katalog, playlist, cari_lagu
 import os
 
 def input_menu():
@@ -44,15 +45,15 @@ def tampilkan_katalog():
 def tampilkan_playlist_user():
     print("\n=== PLAYLIST SAYA ===")
     ada_playlist = False
-    for nama_playlist in playlist[username_aktif]:
+    for nama_playlist in playlist[storage.username_aktif]:
         ada_playlist = True
         print("\nPlaylist:", nama_playlist)
-        if len(playlist[username_aktif][nama_playlist]) == 0:
+        if len(playlist[storage.username_aktif][nama_playlist]) == 0:
             print("Playlist Anda belum ada lagu.")
         else:
             tabel = PrettyTable()
             tabel.field_names = ["Judul", "Penyanyi", "Genre"]
-            for judul_lagu in playlist[username_aktif][nama_playlist]:
+            for judul_lagu in playlist[storage.username_aktif][nama_playlist]:
                 judul_asli = cari_lagu(judul_lagu)
                 if judul_asli != "":
                     tabel.add_row([judul_asli, katalog[judul_asli]["penyanyi"], katalog[judul_asli]["genre"]])

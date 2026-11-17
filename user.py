@@ -1,13 +1,13 @@
 import time
 import inquirer
 import storage
-from storage import cari_lagu, playlist, katalog, username_aktif
+from storage import cari_lagu, playlist, katalog
 from read import tampilkan_katalog, tampilkan_playlist_user
 import os
 
 def menu_user():
-    if username_aktif not in playlist:
-        playlist[username_aktif] = {}
+    if storage.username_aktif not in playlist:
+        playlist[storage.username_aktif] = {}
     while True:
         os.system("cls" if os.name == "nt" else "clear")
         pertanyaan = [
@@ -29,7 +29,7 @@ def menu_user():
         if menu == "1. Buat playlist":
             nama_playlist = input("\nNama playlist Anda: ")
             nama_sama = False
-            for nama in playlist[username_aktif]:
+            for nama in playlist[storage.username_aktif]:
                 if nama.lower() == nama_playlist.lower():
                     nama_sama = True
             
@@ -38,7 +38,7 @@ def menu_user():
             elif nama_sama:
                 print("\nNama playlist itu sudah ada.")
             else:
-                playlist[username_aktif][nama_playlist] = {}
+                playlist[storage.username_aktif][nama_playlist] = {}
                 print("\nPlaylist berhasil dibuat!")
             input("Enter untuk kembali...")
         
@@ -48,11 +48,11 @@ def menu_user():
         
         elif menu == "3. Tambah lagu ke playlist":
             print("\n=== PILIH PLAYLIST ===")
-            for nama_playlist in playlist[username_aktif]:
+            for nama_playlist in playlist[storage.username_aktif]:
                 print("-", nama_playlist)
             nama_pilih = input("\nNama playlist tujuan: ")
             nama_asli = ""
-            for nama in playlist[username_aktif]:
+            for nama in playlist[storage.username_aktif]:
                 if nama.lower() == nama_pilih.lower():
                     nama_asli = nama
             
@@ -64,21 +64,21 @@ def menu_user():
             
                 if judul_tambah == "":
                     print("\nJudul lagu tidak ditemukan.")
-                elif judul_tambah in playlist[username_aktif][nama_asli]:
+                elif judul_tambah in playlist[storage.username_aktif][nama_asli]:
                     print("\nLagu sudah ada di playlist.")
                 else:
-                    playlist[username_aktif][nama_asli][judul_tambah] = True
+                    playlist[storage.username_aktif][nama_asli][judul_tambah] = True
                     print("\nLagu berhasil ditambahkan.")
             input("Enter untuk kembali...")
         
         elif menu == "4. Hapus lagu dari playlist":
             print("\n=== PILIH PLAYLIST ===")
-            for nama_playlist in playlist[username_aktif]:
+            for nama_playlist in playlist[storage.username_aktif]:
                 print("-", nama_playlist)
         
             nama_pilih = input("\nNama playlist tujuan: ")
             nama_asli = ""
-            for nama in playlist[username_aktif]:
+            for nama in playlist[storage.username_aktif]:
                 if nama.lower() == nama_pilih.lower():
                     nama_asli = nama
         
@@ -86,7 +86,7 @@ def menu_user():
                 print("\nPlaylist tidak ditemukan.")
             else:
                 print("\nLagu di playlist", nama_asli)
-                for judul_lagu in playlist[username_aktif][nama_asli]:
+                for judul_lagu in playlist[storage.username_aktif][nama_asli]:
                     judul_asli = cari_lagu(judul_lagu)
                     if judul_asli != "":
                         print(judul_asli, "-", katalog[judul_asli]["penyanyi"], "-", katalog[judul_asli]["genre"])
@@ -96,18 +96,19 @@ def menu_user():
                     print("\nJudul lagu tidak boleh kosong.")
                 else:
                     judul_hapus = ""
-                    for judul in playlist[username_aktif][nama_asli]:
+                    for judul in playlist[storage.username_aktif][nama_asli]:
                         if judul.lower() == judul_hapus_input.lower():
                             judul_hapus = judul
                 
                     if judul_hapus == "":
                         print("\nJudul lagu tidak ada di playlist.")
                     else:
-                        del playlist[username_aktif][nama_asli][judul_hapus]
+                        del playlist[storage.username_aktif][nama_asli][judul_hapus]
                         print("\nLagu telah dihapus dari playlist.")
             input("Enter untuk kembali...")
         
         elif menu == "5. Logout":
+            storage.username_aktif = ""
             print("\nTerima kasih dan sampai jumpa!.")
             time.sleep(3)
             break
