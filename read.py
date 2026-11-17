@@ -4,15 +4,6 @@ import storage
 from storage import katalog, playlist, cari_lagu
 import os
 
-def input_menu():
-    try:
-        pilihan = int(input("Silahkan pilih menu (1/2/3): "))
-        return pilihan
-    except ValueError:
-        print("\nInput harus berupa angka 1, 2, atau 3.")
-        input("Enter untuk kembali...")
-        return 0
-
 def tampilkan_menu_awal():
     os.system("cls" if os.name == "nt" else "clear")
     pertanyaan = [ 
