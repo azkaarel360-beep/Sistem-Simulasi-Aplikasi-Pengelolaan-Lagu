@@ -45,7 +45,13 @@ def tampilkan_playlist_user():
             tabel = PrettyTable()
             tabel.field_names = ["Judul", "Penyanyi", "Genre"]
             for judul_lagu in playlist[storage.username_aktif][nama_playlist]:
-                judul_asli = cari_lagu(judul_lagu)
+                judul_asli = ""
+
+                for judul in katalog:
+                    if judul.lower() == judul_lagu.lower():
+                        judul_asli = judul
+                        break
+
                 if judul_asli != "":
                     tabel.add_row([judul_asli, katalog[judul_asli]["penyanyi"], katalog[judul_asli]["genre"]])
             print(tabel)
