@@ -1,7 +1,7 @@
 import time
 import inquirer
 import storage
-from storage import cari_lagu, playlist, katalog, username_admin
+from storage import playlist, katalog, username_admin
 from read import tampilkan_katalog
 import os
 
@@ -11,11 +11,19 @@ def tambah_lagu_katalog():
     genre = input("Genre: ")
     if judul == "" or penyanyi == "" or genre == "":
         print("\nInput tidak boleh kosong.")
-    elif cari_lagu(judul) != "":
-        print("\nJudul lagu sudah ada di katalog.")
     else:
-        katalog[judul] = {"penyanyi": penyanyi, "genre": genre}
-        print("\nLagu berhasil ditambahkan.")
+        judul_cocok = ""
+
+        for nama in katalog:
+            if nama.lower() == judul.lower():
+                judul_cocok = nama
+                break
+        
+        if judul_cocok != "":
+            print("\nJudul lagu sudah ada di katalog.")
+        else:
+            katalog[judul] = {"penyanyi": penyanyi, "genre": genre}
+            print("\nLagu berhasil ditambahkan.")
 
 def menu_admin():
     if storage.username_aktif.lower() == username_admin.lower():
@@ -48,7 +56,14 @@ def menu_admin():
             elif menu == "3. Update katalog lagu":
                 tampilkan_katalog()
                 if len(katalog) > 0:
-                    judul_lama = cari_lagu(input("\nMasukkan judul lagu yang ingin diubah: "))
+                    judul_input = input("\nMasukkan judul lagu yang ingin diubah: ")
+                    judul_lama = ""
+
+                    for judul in katalog:
+                        if judul.lower() == judul_input.lower():
+                            judul_lama = judul
+                            break
+                    
                     if judul_lama == "":
                         print("\nJudul lagu tidak ditemukan.")
                     else:
@@ -59,7 +74,12 @@ def menu_admin():
                 
                         judul_akhir = judul_lama
                         if judul_baru != "":
-                            judul_cocok = cari_lagu(judul_baru) 
+                            judul_cocok = ""
+
+                            for judul in katalog:
+                                if judul.lower() == judul_baru.lower():
+                                    judul_cocok = judul
+                                    break
                         else:
                             judul_cocok = ""
                             
@@ -89,7 +109,14 @@ def menu_admin():
             elif menu == "4. Hapus lagu dari katalog":
                 tampilkan_katalog()
                 if len(katalog) > 0:
-                    judul_hapus = cari_lagu(input("\nMasukkan judul lagu yang ingin dihapus: "))
+                    judul_input = input("\nMasukkan judul lagu yang ingin dihapus: ")
+                    judul_hapus = ""
+
+                    for judul in katalog:
+                        if judul.lower() == judul_input.lower():
+                            judul_hapus = judul
+                            break
+                        
                     if judul_hapus == "":
                         print("\nJudul lagu tidak ditemukan.")
                     else:
