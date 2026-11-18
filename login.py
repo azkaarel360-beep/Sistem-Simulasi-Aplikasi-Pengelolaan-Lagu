@@ -1,8 +1,5 @@
 import storage
 
-def validasi_input(teks):
-    return teks != ""
-
 def autentikasi_login():
     username = input("\nSilahkan masukkan username: ")
     password = input("Silahkan masukkan password: ")
