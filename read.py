@@ -1,7 +1,7 @@
 import inquirer
 from prettytable import PrettyTable
 import storage 
-from storage import katalog, playlist, cari_lagu
+from storage import katalog, playlist
 import os
 
 def tampilkan_menu_awal():
