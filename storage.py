@@ -10,9 +10,3 @@ katalog = {
 
 playlist = {}
 username_aktif = ""
-
-def cari_lagu(judul_cari):
-    for judul in katalog:
-        if judul.lower() == judul_cari.lower():
-            return judul
-    return ""
