@@ -21,7 +21,7 @@ def autentikasi_login():
                 print("\nKesempatan login habis. Program dihentikan.")
                 break
 
-            print(f"Sisa percobaan: {sisa_percobaan}")
+            print(f"\nSisa percobaan: {sisa_percobaan}")
             input("Enter untuk kembali...")
         
         storage.username_aktif = nama_login
