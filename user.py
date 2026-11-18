@@ -1,7 +1,7 @@
 import time
 import inquirer
 import storage
-from storage import cari_lagu, playlist, katalog
+from storage import playlist, katalog
 from read import tampilkan_katalog, tampilkan_playlist_user
 import os
 
@@ -60,7 +60,12 @@ def menu_user():
                 print("\nPlaylist tidak ditemukan.")
             else:
                 tampilkan_katalog()
-                judul_tambah = cari_lagu(input("\nJudul lagu yang ingin ditambahkan: "))
+                judul_input = input("\nJudul lagu yang ingin ditambahkan: ")
+                judul_tambah = ""
+
+                for judul in katalog:
+                    if judul.lower() == judul_input.lower():
+                        judul_tambah = judul
             
                 if judul_tambah == "":
                     print("\nJudul lagu tidak ditemukan.")
@@ -87,7 +92,13 @@ def menu_user():
             else:
                 print("\nLagu di playlist", nama_asli)
                 for judul_lagu in playlist[storage.username_aktif][nama_asli]:
-                    judul_asli = cari_lagu(judul_lagu)
+                    judul_asli = ""
+
+                    for judul in katalog:
+                        if judul.lower() == judul_lagu.lower():
+                            judul_asli = judul
+                            break
+                
                     if judul_asli != "":
                         print(judul_asli, "-", katalog[judul_asli]["penyanyi"], "-", katalog[judul_asli]["genre"])
                 judul_hapus_input = input("\nJudul lagu yang ingin dihapus: ")
