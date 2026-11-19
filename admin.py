@@ -56,7 +56,7 @@ def menu_admin():
             elif menu == "3. Update katalog lagu":
                 tampilkan_katalog()
                 if len(katalog) > 0:
-                    judul_input = input("\nMasukkan judul lagu yang ingin diubah: ")
+                    judul_input = input("\nMasukkan judul lagu yang ingin diubah: ").strip()
                     judul_lama = ""
 
                     for judul in katalog:

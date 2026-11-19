@@ -1,4 +1,3 @@
-import storage
 from storage import akun, playlist  
 
 def buat_akun_baru():
