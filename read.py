@@ -18,8 +18,10 @@ def tampilkan_menu_awal():
         )
     ]
     jawaban = inquirer.prompt(pertanyaan)
-    pilihan = jawaban["pilihan"]
+    if jawaban is None:
+        raise KeyboardInterrupt
 
+    pilihan = jawaban["pilihan"]
     return pilihan[0] 
 
 def tampilkan_katalog():
