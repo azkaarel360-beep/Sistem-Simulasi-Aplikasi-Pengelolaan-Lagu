@@ -2,8 +2,8 @@ import storage
 
 def autentikasi_login():
     for i in range(1,4):
-        username = input("\nSilahkan masukkan username: ")
-        password = input("Silahkan masukkan password: ")
+        username = input("\nSilahkan masukkan username: ").strip()
+        password = input("Silahkan masukkan password: ").strip()
         nama_login = ""
     
         for nama_akun in storage.akun:
@@ -24,5 +24,5 @@ def autentikasi_login():
             print(f"\nSisa percobaan: {sisa_percobaan}")
             input("Enter untuk kembali...")
         
-        storage.username_aktif = nama_login
-        return storage.username_aktif
+    storage.username_aktif = nama_login
+    return storage.username_aktif

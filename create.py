@@ -1,8 +1,8 @@
 from storage import akun, playlist  
 
 def buat_akun_baru():
-    username_baru = input("\nBuat username: ")
-    password_baru = input("Buat password: ")
+    username_baru = input("\nBuat username: ").strip()
+    password_baru = input("Buat password: ").strip()
     if username_baru == "" or password_baru == "":
         print("\nUsername dan password tidak boleh kosong.")
     else: 
