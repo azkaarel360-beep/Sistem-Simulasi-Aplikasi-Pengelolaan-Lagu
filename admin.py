@@ -42,7 +42,7 @@ def ubah_lagu_katalog():
     tampilkan_katalog()
     if len(katalog) == 0:
         return
-    id_lagu = cari_id_lagu(input("\nMasukkan ID lagu yang ingin diubah: ")).strip()
+    id_lagu = cari_id_lagu(input("\nMasukkan ID lagu yang ingin diubah: "))
     if id_lagu is None:
         print("\nID lagu tidak ditemukan.")
         return
@@ -73,7 +73,7 @@ def hapus_lagu_katalog():
     tampilkan_katalog()
     if len(katalog) == 0:
         return
-    id_lagu = cari_id_lagu(input("\nMasukkan ID lagu yang ingin dihapus: ")).strip()
+    id_lagu = cari_id_lagu(input("\nMasukkan ID lagu yang ingin dihapus: "))
     if id_lagu is None:
         print("\nID lagu tidak ditemukan.")
         return
