@@ -1,4 +1,4 @@
-from storage import akun, playlist  
+from storage import akun, playlist, lagu_favorit
 
 def buat_akun_baru():
     username_baru = input("\nBuat username: ").strip()
@@ -16,5 +16,7 @@ def buat_akun_baru():
         else:
             akun[username_baru] = password_baru
             playlist[username_baru] = {}
+            lagu_favorit[username_baru] = {}
             print("\nRegistrasi berhasil! Silakan login.")
+
     input("Enter untuk kembali...")

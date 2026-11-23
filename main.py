@@ -26,7 +26,7 @@ try:
             print("\nTerima kasih dan sampai jumpa!")
             time.sleep(3)
             break
-
+ 
 except KeyboardInterrupt:
     print("\nProgram dihentikan.")
     print("Terimakasih dan sampai jumpa!")
