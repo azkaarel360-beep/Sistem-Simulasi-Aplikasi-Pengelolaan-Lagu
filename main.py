@@ -11,7 +11,7 @@ try:
         pilihan = tampilkan_menu_awal()
 
         if pilihan == "1":
-            username_aktif = autentikasi_login()
+            username_aktif = autentikasi_login
 
             if username_aktif != "":
                 if username_aktif.lower() == storage.username_admin.lower():
@@ -28,5 +28,5 @@ try:
             break
 
 except KeyboardInterrupt:
-    print("\nProgram dihentikan")
-    print("Terima kasih dan sampai jumpa!")
+    print("\nProgram dihentikan.")
+    print("Terimakasih dan sampai jumpa!")

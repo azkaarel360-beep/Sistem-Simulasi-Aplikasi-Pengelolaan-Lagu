@@ -1,9 +1,8 @@
-import storage
-from storage import akun, playlist  
+from storage import akun, playlist, lagu_favorit
 
 def buat_akun_baru():
-    username_baru = input("\nBuat username: ")
-    password_baru = input("Buat password: ")
+    username_baru = input("\nBuat username: ").strip()
+    password_baru = input("Buat password: ").strip()
     if username_baru == "" or password_baru == "":
         print("\nUsername dan password tidak boleh kosong.")
     else: 
@@ -17,5 +16,7 @@ def buat_akun_baru():
         else:
             akun[username_baru] = password_baru
             playlist[username_baru] = {}
+            lagu_favorit[username_baru] = {}
             print("\nRegistrasi berhasil! Silakan login.")
+
     input("Enter untuk kembali...")
