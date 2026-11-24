@@ -1,5 +1,6 @@
 import time
 import storage
+import KOLOR as K
 from create import buat_akun_baru
 from login import autentikasi_login
 from admin import menu_admin
@@ -23,10 +24,16 @@ try:
             buat_akun_baru()
 
         elif pilihan == "3":
-            print("\nTerima kasih dan sampai jumpa!")
+            K.sukses("\nTerima kasih dan sampai jumpa!")
             time.sleep(3)
             break
 
 except KeyboardInterrupt:
-    print("\nProgram dihentikan.")
-    print("Terimakasih dan sampai jumpa!")
+    K.info("\nProgram dihentikan.")
+    K.sukses("Terimakasih dan sampai jumpa!")
+except EOFError:
+    K.gagal("\nInput terputus. Program dihentikan.")
+except Exception as pesan_error:
+    K.gagal(f"\nTerjadi kesalahan tak terduga: {pesan_error}")
+finally:
+    storage.username_aktif = ""

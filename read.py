@@ -1,6 +1,8 @@
 import inquirer
+from inquirer.themes import BlueComposure
 from prettytable import PrettyTable
 import storage 
+import KOLOR as K
 from storage import katalog, playlist
 import os
 
@@ -17,7 +19,7 @@ def tampilkan_menu_awal():
             ]
         )
     ]
-    jawaban = inquirer.prompt(pertanyaan)
+    jawaban = inquirer.prompt(pertanyaan, theme=BlueComposure())
     if jawaban is None:
         raise KeyboardInterrupt
 
@@ -25,37 +27,48 @@ def tampilkan_menu_awal():
     return pilihan[0] 
 
 def tampilkan_katalog():
-    print("\n=== KATALOG LAGU ===")
+    K.judul("\n=== KATALOG LAGU ===")
     if len(katalog) == 0:
-        print("Katalog masih kosong.")
+        K.kosong("Katalog masih kosong.")
     else:
         tabel = PrettyTable()
         tabel.field_names = ["ID", "Judul", "Penyanyi", "Genre"]
         for id_lagu in katalog:
             tabel.add_row([id_lagu, katalog[id_lagu]["judul"], katalog[id_lagu]["penyanyi"], katalog[id_lagu]["genre"]])
-        print(tabel)
+        K.cetak_tabel(tabel)
 
 def tampilkan_playlist_user():
-    print("\n=== PLAYLIST SAYA ===")
-    ada_playlist = False
-    for nama_playlist in playlist[storage.username_aktif]:
-        ada_playlist = True
-        print("\nPlaylist:", nama_playlist)
-        if len(playlist[storage.username_aktif][nama_playlist]) == 0:
-            print("Playlist Anda belum ada lagu.")
+    K.judul("\n=== PLAYLIST SAYA ===")
+
+    username = storage.username_aktif
+
+    if username not in playlist or len(playlist[username]) == 0:
+        K.kosong("Kamu belum membuat playlist.")
+        return
+
+    for nama_playlist in playlist[username]:
+        K.daftar(f"\n=== PLAYLIST: {nama_playlist} ===")
+
+        daftar_lagu = playlist[username][nama_playlist]
+
+        if len(daftar_lagu) == 0:
+            K.kosong("Playlist Anda belum ada lagu.")
         else:
             tabel = PrettyTable()
             tabel.field_names = ["ID", "Judul", "Penyanyi", "Genre"]
-            for id_lagu in playlist[storage.username_aktif][nama_playlist]:
-                judul_asli = ""
 
-                for judul in katalog:
-                    if judul.lower() == id_lagu.lower():
-                        judul_asli = judul
-                        break
+            for id_lagu in daftar_lagu:
+                if id_lagu in katalog:
+                    data = katalog[id_lagu]
 
-                if judul_asli != "":
-                    tabel.add_row([judul_asli, katalog[judul_asli]["judul"], katalog[judul_asli]["penyanyi"], katalog[judul_asli]["genre"]])
-            print(tabel)
-    if ada_playlist == False:
-        print("\nKamu belum membuat playlist.")
+                    tabel.add_row([
+                        id_lagu,
+                        data["judul"],
+                        data["penyanyi"],
+                        data["genre"]
+                    ])
+
+            if len(tabel.rows) > 0:
+                K.cetak_tabel(tabel)
+            else:
+                K.kosong("Tidak ada lagu yang tersedia di katalog.")

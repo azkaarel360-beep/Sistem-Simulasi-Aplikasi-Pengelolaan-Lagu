@@ -1,19 +1,30 @@
 import time
 import inquirer
+from inquirer.themes import RedSolace
 import storage
-from storage import playlist, katalog, username_admin
+import KOLOR as K
+from storage import playlist, katalog, lagu_favorit, username_admin
 from read import tampilkan_katalog
 import os
 
+class IDTidakValid(Exception):
+    pass
+
+def ubah_ke_angka(teks):
+    try:
+        return int(teks.strip())
+    except ValueError:
+        raise IDTidakValid("ID harus berupa angka.")
+
+
 def cari_id_lagu(teks):
-    """Ubah input menjadi ID lagu yang valid, atau None jika tidak ada."""
-    teks = teks.strip()
-    if teks.isdigit() and int(teks) in katalog:
-        return int(teks)
-    return None
+    id_lagu = ubah_ke_angka(teks)
+    if id_lagu not in katalog:
+        raise IDTidakValid("ID lagu tidak ditemukan.")
+    return id_lagu
+
 
 def lagu_kembar(judul, penyanyi, genre, abaikan_id=None):
-    """True jika sudah ada lagu dengan judul, penyanyi, DAN genre yang sama persis."""
     for id_lagu in katalog:
         if id_lagu == abaikan_id:
             continue
@@ -24,37 +35,40 @@ def lagu_kembar(judul, penyanyi, genre, abaikan_id=None):
             return True
     return False
 
+
 def tambah_lagu_katalog():
-    judul = input("\nJudul lagu: ").strip()
-    penyanyi = input("Penyanyi: ").strip()
-    genre = input("Genre: ").strip()
+    judul = K.tanya_cyan("\nJudul lagu: ").strip()
+    penyanyi = K.tanya_magenta("Penyanyi: ").strip()
+    genre = K.tanya_hijau("Genre: ").strip()
     if judul == "" or penyanyi == "" or genre == "":
-        print("\nInput tidak boleh kosong.")
+        K.gagal("\nInput tidak boleh kosong.")
     elif lagu_kembar(judul, penyanyi, genre):
-        print("\nLagu dengan judul, penyanyi, dan genre yang sama sudah ada di katalog.")
+        K.gagal("\nLagu dengan judul, penyanyi, dan genre yang sama sudah ada di katalog.")
     else:
         id_baru = storage.id_berikutnya
         katalog[id_baru] = {"judul": judul, "penyanyi": penyanyi, "genre": genre}
         storage.id_berikutnya += 1
-        print(f"\nLagu berhasil ditambahkan dengan ID {id_baru}.")
+        K.sukses(f"\nLagu berhasil ditambahkan dengan ID {id_baru}.")
 
 def ubah_lagu_katalog():
     tampilkan_katalog()
     if len(katalog) == 0:
         return
-    id_lagu = cari_id_lagu(input("\nMasukkan ID lagu yang ingin diubah: "))
-    if id_lagu is None:
-        print("\nID lagu tidak ditemukan.")
+
+    try:
+        id_lagu = cari_id_lagu(K.tanya_yellow("\nMasukkan ID lagu yang ingin diubah: "))
+    except IDTidakValid as pesan_error:
+        K.gagal(f"\n{pesan_error}")
         return
 
     data = katalog[id_lagu]
-    print("\nKosongkan bagian jika tidak ingin mengubahnya.")
-    judul_baru = input(f"Judul baru untuk {data['judul']}: ").strip()
-    penyanyi_baru = input(f"Penyanyi baru untuk {data['penyanyi']}: ").strip()
-    genre_baru = input(f"Genre baru untuk {data['genre']}: ").strip()
+    K.info("\nKosongkan bagian jika tidak ingin mengubahnya.")
+    judul_baru = K.tanya_cyan(f"Judul baru untuk {data['judul']}: ").strip()
+    penyanyi_baru = K.tanya_magenta(f"Penyanyi baru untuk {data['penyanyi']}: ").strip()
+    genre_baru = K.tanya_hijau(f"Genre baru untuk {data['genre']}: ").strip()
 
     if judul_baru == "" and penyanyi_baru == "" and genre_baru == "":
-        print("\nTidak ada yang diperbarui.")
+        K.info("\nTidak ada yang diperbarui.")
         return
 
     judul_akhir = judul_baru if judul_baru != "" else data["judul"]
@@ -62,72 +76,87 @@ def ubah_lagu_katalog():
     genre_akhir = genre_baru if genre_baru != "" else data["genre"]
 
     if lagu_kembar(judul_akhir, penyanyi_akhir, genre_akhir, abaikan_id=id_lagu):
-        print("\nLagu dengan judul, penyanyi, dan genre yang sama sudah ada di katalog.")
+        K.gagal("\nLagu dengan judul, penyanyi, dan genre yang sama sudah ada di katalog.")
     else:
         data["judul"] = judul_akhir
         data["penyanyi"] = penyanyi_akhir
         data["genre"] = genre_akhir
-        print("\nData lagu berhasil diperbarui.")
+        K.sukses("\nData lagu berhasil diperbarui.")
+
 
 def hapus_lagu_katalog():
     tampilkan_katalog()
     if len(katalog) == 0:
         return
-    id_lagu = cari_id_lagu(input("\nMasukkan ID lagu yang ingin dihapus: "))
-    if id_lagu is None:
-        print("\nID lagu tidak ditemukan.")
+
+    try:
+        id_lagu = cari_id_lagu(K.tanya_merah("\nMasukkan ID lagu yang ingin dihapus: "))
+    except IDTidakValid as pesan_error:
+        K.gagal(f"\n{pesan_error}")
         return
 
     del katalog[id_lagu]
+
     for data_user in playlist:
         for nama_playlist in playlist[data_user]:
             if id_lagu in playlist[data_user][nama_playlist]:
                 del playlist[data_user][nama_playlist][id_lagu]
-    print("\nLagu berhasil dihapus dari katalog.")
+
+    for data_user in lagu_favorit:
+        if id_lagu in lagu_favorit[data_user]:
+            del lagu_favorit[data_user][id_lagu]
+
+    K.sukses("\nLagu berhasil dihapus dari katalog.")
+
 
 def menu_admin():
-    if storage.username_aktif.lower() == username_admin.lower():
-        while True:
-            os.system("cls" if os.name == "nt" else "clear")
-            pertanyaan = [
-                inquirer.List(
-                    "menu",
-                    message="=== MENU ADMIN ===",
-                    choices=[
-                        "1. Tambah lagu ke katalog",
-                        "2. Lihat katalog",
-                        "3. Update katalog lagu",
-                        "4. Hapus lagu dari katalog",
-                        "5. Logout"
-                    ]
-                )
-            ]
-            jawaban = inquirer.prompt(pertanyaan)
-            if jawaban is None:
-                break
-            menu = jawaban["menu"]
+    if storage.username_aktif.lower() != username_admin.lower():
+        return
 
+    while True:
+        os.system("cls" if os.name == "nt" else "clear")
+        pertanyaan = [
+            inquirer.List(
+                "menu",
+                message="=== MENU ADMIN ===",
+                choices=[
+                    "1. Tambah lagu ke katalog",
+                    "2. Lihat katalog",
+                    "3. Update katalog lagu",
+                    "4. Hapus lagu dari katalog",
+                    "5. Logout"
+                ]
+            )
+        ]
+        jawaban = inquirer.prompt(pertanyaan, theme=RedSolace())
+        if jawaban is None:
+            break
+        menu = jawaban["menu"]
+
+        try:
             if menu == "1. Tambah lagu ke katalog":
                 tambah_lagu_katalog()
-                input("\nEnter untuk kembali...")
 
             elif menu == "2. Lihat katalog":
                 tampilkan_katalog()
-                input("\nEnter untuk kembali...")
 
             elif menu == "3. Update katalog lagu":
                 ubah_lagu_katalog()
-                input("\nTekan Enter untuk kembali...")
 
             elif menu == "4. Hapus lagu dari katalog":
                 hapus_lagu_katalog()
-                input("\nEnter untuk kembali...")
 
             elif menu == "5. Logout":
                 storage.username_aktif = ""
-                print("\nTerima kasih dan sampai jumpa!.")
+                K.sukses("\nTerima kasih dan sampai jumpa!.")
                 time.sleep(3)
                 break
+
             else:
-                print("\nPilihan tidak tersedia.")
-                input("Enter untuk kembali...")
+                K.gagal("\nPilihan tidak tersedia.")
+
+        except Exception as pesan_error:
+            K.gagal(f"\nTerjadi kesalahan: {pesan_error}")
+        finally:
+            if menu != "5. Logout":
+                K.tanya_putih("\nEnter untuk kembali...")
