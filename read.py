@@ -37,25 +37,36 @@ def tampilkan_katalog():
 
 def tampilkan_playlist_user():
     print("\n=== PLAYLIST SAYA ===")
-    ada_playlist = False
-    for nama_playlist in playlist[storage.username_aktif]:
-        ada_playlist = True
-        print("\nPlaylist:", nama_playlist)
-        if len(playlist[storage.username_aktif][nama_playlist]) == 0:
+
+    username = storage.username_aktif
+
+    if username not in playlist or len(playlist[username]) == 0:
+        print("Kamu belum membuat playlist.")
+        return
+
+    for nama_playlist in playlist[username]:
+        print(f"\n=== PLAYLIST: {nama_playlist} ===")
+
+        daftar_lagu = playlist[username][nama_playlist]
+
+        if len(daftar_lagu) == 0:
             print("Playlist Anda belum ada lagu.")
         else:
             tabel = PrettyTable()
             tabel.field_names = ["ID", "Judul", "Penyanyi", "Genre"]
-            for id_lagu in playlist[storage.username_aktif][nama_playlist]:
-                judul_asli = ""
 
-                for judul in katalog:
-                    if judul.lower() == id_lagu.lower():
-                        judul_asli = judul
-                        break
+            for id_lagu in daftar_lagu:
+                if id_lagu in katalog:
+                    data = katalog[id_lagu]
 
-                if judul_asli != "":
-                    tabel.add_row([judul_asli, katalog[judul_asli]["judul"], katalog[judul_asli]["penyanyi"], katalog[judul_asli]["genre"]])
-            print(tabel)
-    if ada_playlist == False:
-        print("\nKamu belum membuat playlist.")
+                    tabel.add_row([
+                        id_lagu,
+                        data["judul"],
+                        data["penyanyi"],
+                        data["genre"]
+                    ])
+
+            if len(tabel.rows) > 0:
+                print(tabel)
+            else:
+                print("Tidak ada lagu yang tersedia di katalog.")

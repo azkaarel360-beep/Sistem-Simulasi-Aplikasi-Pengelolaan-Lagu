@@ -10,4 +10,5 @@ katalog = {
 id_berikutnya = 4
 
 playlist = {}
+lagu_favorit = {}
 username_aktif = ""
