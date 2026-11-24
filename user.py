@@ -1,6 +1,8 @@
 import time
 import inquirer
+from inquirer.themes import GreenPassion
 import storage
+import KOLOR as K
 from prettytable import PrettyTable
 from storage import playlist, katalog, lagu_favorit
 from read import tampilkan_katalog, tampilkan_playlist_user
@@ -38,14 +40,14 @@ def tampilkan_lagu_playlist(nama_playlist):
                 data["genre"]
             ])
     if len(tabel.rows) == 0:
-        print("\nPlaylist ini belum memiliki lagu!")
+        K.kosong("\nPlaylist ini belum memiliki lagu!")
     else:
-        print(f"\n=== PLAYLIST: {nama_playlist} ===")
-        print(tabel)
+        K.judul(f"\n=== PLAYLIST: {nama_playlist} ===")
+        K.cetak_tabel(tabel)
 
 def tampilkan_lagu_favorit():
     daftar_favorit = lagu_favorit[storage.username_aktif]
-    print("\n=== DAFTAR LAGU FAVORIT ===")
+    K.judul("\n=== DAFTAR LAGU FAVORIT ===")
 
     tabel = PrettyTable()
     tabel.field_names =   ["ID", "Judul", "Penyanyi", "Genre"]
@@ -61,9 +63,9 @@ def tampilkan_lagu_favorit():
             ])
 
     if len(tabel.rows) == 0:
-        print("Belum ada lagu favorit.")
+        K.kosong("Belum ada lagu favorit.")
     else:
-        print(tabel)
+        K.cetak_tabel(tabel)
 
 def menu_favorit():
     while True:
@@ -82,7 +84,7 @@ def menu_favorit():
             )
         ]
 
-        jawaban = inquirer.prompt(pertanyaan)
+        jawaban = inquirer.prompt(pertanyaan, theme=GreenPassion())
 
         if jawaban is None:
             break
@@ -91,55 +93,55 @@ def menu_favorit():
 
         if menu == "1. Tambah lagu favorit":
             if len(playlist[storage.username_aktif]) == 0:
-                print("\nKamu belum memiliki playlist.")
+                K.kosong("\nKamu belum memiliki playlist.")
             else:
-                print("\n=== PILIH PLAYLIST ===")
+                K.judul("\n=== PILIH PLAYLIST ===")
 
                 for nama_playlist in playlist[storage.username_aktif]:
-                    print("-", nama_playlist)
+                    K.daftar("- " + nama_playlist)
 
                 nama_asli = cari_nama_playlist(
-                    input("\nNama playlist sumber: ")
+                    K.tanya_yellow("\nNama playlist sumber: ")
                 )
 
                 if nama_asli == "":
-                    print("\nPlaylist tidak ditemukan.")
+                    K.gagal("\nPlaylist tidak ditemukan.")
                 else:
                     tampilkan_lagu_playlist(nama_asli)
 
                     id_lagu = cari_id_lagu(
-                        input("\nID lagu yang ingin dijadikan favorit: ")
+                        K.tanya_cyan("\nID lagu yang ingin dijadikan favorit: ")
                     )
 
                     if id_lagu is None:
-                        print("\nID lagu tidak ditemukan di katalog.")
+                        K.gagal("\nID lagu tidak ditemukan di katalog.")
                     elif id_lagu not in playlist[storage.username_aktif][nama_asli]:
-                        print("\nLagu tersebut tidak ada di playlist yang dipilih.")
+                        K.gagal("\nLagu tersebut tidak ada di playlist yang dipilih.")
                     elif id_lagu in lagu_favorit[storage.username_aktif]:
-                        print("\nLagu sudah ada di daftar favorit.")
+                        K.peringatan("\nLagu sudah ada di daftar favorit.")
                     else:
                         lagu_favorit[storage.username_aktif][id_lagu] = True
-                        print("\nLagu berhasil ditambahkan ke favorit.")
+                        K.sukses("\nLagu berhasil ditambahkan ke favorit.")
 
-            input("\nEnter untuk kembali...")
+            K.tanya_putih("\nEnter untuk kembali...")
 
         elif menu == "2. Lihat lagu favorit":
             tampilkan_lagu_favorit()
-            input("\nEnter untuk kembali...")
+            K.tanya_putih("\nEnter untuk kembali...")
 
         elif menu == "3. Hapus lagu favorit":
             tampilkan_lagu_favorit()
 
             if len(lagu_favorit[storage.username_aktif]) > 0:
-                id_hapus = input("\nID lagu favorit yang ingin dihapus: ").strip()
+                id_hapus = K.tanya_merah("\nID lagu favorit yang ingin dihapus: ").strip()
 
                 if id_hapus.isdigit() and int(id_hapus) in lagu_favorit[storage.username_aktif]:
                     del lagu_favorit[storage.username_aktif][int(id_hapus)]
-                    print("\nLagu berhasil dihapus dari favorit.")
+                    K.sukses("\nLagu berhasil dihapus dari favorit.")
                 else:
-                    print("\nID lagu tidak ditemukan di daftar favorit.")
+                    K.gagal("\nID lagu tidak ditemukan di daftar favorit.")
 
-            input("\nEnter untuk kembali...")
+            K.tanya_putih("\nEnter untuk kembali...")
 
         elif menu == "4. Kembali":
             break
@@ -169,75 +171,75 @@ def menu_user():
             )
         ]
 
-        jawaban = inquirer.prompt(pertanyaan)
+        jawaban = inquirer.prompt(pertanyaan, theme=GreenPassion())
         if jawaban is None:
             break
         menu = jawaban["menu"]
 
         if menu == "1. Buat playlist":
-            nama_playlist = input("\nNama playlist Anda: ").strip()
+            nama_playlist = K.tanya_magenta("\nNama playlist Anda: ").strip()
 
             if nama_playlist == "":
-                print("\nNama playlist tidak boleh kosong.")
+                K.gagal("\nNama playlist tidak boleh kosong.")
             elif cari_nama_playlist(nama_playlist) != "":
-                print("\nNama playlist itu sudah ada.")
+                K.gagal("\nNama playlist itu sudah ada.")
             else:
                 playlist[storage.username_aktif][nama_playlist] = {}
-                print("\nPlaylist berhasil dibuat!")
+                K.sukses("\nPlaylist berhasil dibuat!")
 
-            input("Enter untuk kembali...")
+            K.tanya_putih("Enter untuk kembali...")
 
         elif menu == "2. Lihat playlist":
             tampilkan_playlist_user()
-            input("\nEnter untuk kembali...")
+            K.tanya_putih("\nEnter untuk kembali...")
 
         elif menu == "3. Tambah lagu ke playlist":
-            print("\n=== PILIH PLAYLIST ===")
+            K.judul("\n=== PILIH PLAYLIST ===")
 
             for nama_playlist in playlist[storage.username_aktif]:
-                print("-", nama_playlist)
+                K.daftar("- " + nama_playlist)
 
-            nama_asli = cari_nama_playlist(input("\nNama playlist tujuan: "))
+            nama_asli = cari_nama_playlist(K.tanya_yellow("\nNama playlist tujuan: "))
 
             if nama_asli == "":
-                print("\nPlaylist tidak ditemukan.")
+                K.gagal("\nPlaylist tidak ditemukan.")
             else:
                 tampilkan_katalog()
-                id_lagu = cari_id_lagu(input("\nID lagu yang ingin ditambahkan: "))
+                id_lagu = cari_id_lagu(K.tanya_hijau("\nID lagu yang ingin ditambahkan: "))
 
                 if id_lagu is None:
-                    print("\nID lagu tidak ditemukan.")
+                    K.gagal("\nID lagu tidak ditemukan.")
                 elif id_lagu in playlist[storage.username_aktif][nama_asli]:
-                    print("\nLagu sudah ada di playlist.")
+                    K.peringatan("\nLagu sudah ada di playlist.")
                 else:
                     playlist[storage.username_aktif][nama_asli][id_lagu] = True
-                    print("\nLagu berhasil ditambahkan.")
+                    K.sukses("\nLagu berhasil ditambahkan.")
 
-            input("Enter untuk kembali...")
+            K.tanya_putih("Enter untuk kembali...")
 
         
         elif menu == "4. Hapus lagu dari playlist":
             if len(playlist[storage.username_aktif]) == 0:
-                print("\nKamu belum membuat playlist.")
+                K.kosong("\nKamu belum membuat playlist.")
             else:
-                print("\n=== PILIH PLAYLIST ===")
+                K.judul("\n=== PILIH PLAYLIST ===")
 
                 for nama_playlist in playlist[storage.username_aktif]:
-                    print("-", nama_playlist)
+                    K.daftar("- " + nama_playlist)
 
                 nama_asli = cari_nama_playlist(
-                    input("\nNama playlist tujuan: ")
+                    K.tanya_yellow("\nNama playlist tujuan: ")
                 )
 
                 if nama_asli == "":
-                    print("\nPlaylist tidak ditemukan.")
+                    K.gagal("\nPlaylist tidak ditemukan.")
                 else:
                     daftar_lagu = playlist[storage.username_aktif][nama_asli]
 
-                    print(f"\n=== PLAYLIST: {nama_asli} ===")
+                    K.judul(f"\n=== PLAYLIST: {nama_asli} ===")
 
                     if len(daftar_lagu) == 0:
-                        print("Playlist ini belum memiliki lagu.")
+                        K.kosong("Playlist ini belum memiliki lagu.")
                     else:
                         tabel = PrettyTable()
                         tabel.field_names = ["ID", "Judul", "Penyanyi", "Genre"]
@@ -253,25 +255,25 @@ def menu_user():
                                     data["genre"]
                                 ])
 
-                        print(tabel)
+                        K.cetak_tabel(tabel)
 
-                        id_hapus = input("\nID lagu yang ingin dihapus: ").strip()
+                        id_hapus = K.tanya_merah("\nID lagu yang ingin dihapus: ").strip()
 
                         if id_hapus.isdigit() and int(id_hapus) in daftar_lagu:
                             del daftar_lagu[int(id_hapus)]
-                            print("\nLagu berhasil dihapus dari playlist.")
+                            K.sukses("\nLagu berhasil dihapus dari playlist.")
                         else:
-                            print("\nID lagu tidak ditemukan di playlist.")
+                            K.gagal("\nID lagu tidak ditemukan di playlist.")
 
-            input("\nEnter untuk kembali...")
+            K.tanya_putih("\nEnter untuk kembali...")
         elif menu == "5. Lagu favorit":
             menu_favorit()
 
         elif menu == "6. Logout":
             storage.username_aktif = ""
-            print("\nTerima kasih dan sampai jumpa!")
+            K.sukses("\nTerima kasih dan sampai jumpa!")
             time.sleep(3)
             break
         else:
-            print("Pilihan tidak tersedia.")
-            input("Enter untuk kembali...")
+            K.gagal("Pilihan tidak tersedia.")
+            K.tanya_putih("Enter untuk kembali...")

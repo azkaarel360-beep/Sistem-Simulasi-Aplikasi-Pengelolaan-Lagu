@@ -1,9 +1,10 @@
 import storage
+import KOLOR as K
 
 def autentikasi_login():
     for i in range(1,4):
-        username = input("\nSilahkan masukkan username: ").strip()
-        password = input("Silahkan masukkan password: ").strip()
+        username = K.tanya_biru("\nSilahkan masukkan username: ").strip()
+        password = K.tanya_magenta("Silahkan masukkan password: ").strip()
         nama_login = ""
     
         for nama_akun in storage.akun:
@@ -16,13 +17,13 @@ def autentikasi_login():
             return storage.username_aktif
         else:
             sisa_percobaan = 3 - i
-            print("\nUsername atau password salah.")
+            K.gagal("\nUsername atau password salah.")
             if sisa_percobaan == 0:
-                print("\nKesempatan login habis. Program dihentikan.")
+                K.gagal("\nKesempatan login habis. Program dihentikan.")
                 break
 
-            print(f"\nSisa percobaan: {sisa_percobaan}")
-            input("Enter untuk kembali...")
+            K.peringatan(f"\nSisa percobaan: {sisa_percobaan}")
+            K.tanya_putih("Enter untuk kembali...")
         
     storage.username_aktif = nama_login
     return storage.username_aktif
