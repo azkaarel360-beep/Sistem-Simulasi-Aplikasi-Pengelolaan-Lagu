@@ -31,3 +31,9 @@ try:
 except KeyboardInterrupt:
     K.info("\nProgram dihentikan.")
     K.sukses("Terimakasih dan sampai jumpa!")
+except EOFError:
+    K.gagal("\nInput terputus. Program dihentikan.")
+except Exception as pesan_error:
+    K.gagal(f"\nTerjadi kesalahan tak terduga: {pesan_error}")
+finally:
+    storage.username_aktif = ""
