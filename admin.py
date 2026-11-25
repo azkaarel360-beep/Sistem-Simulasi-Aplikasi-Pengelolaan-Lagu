@@ -1,8 +1,8 @@
 import time
 import inquirer
 from inquirer.themes import RedSolace
+from colorama import Fore
 import storage
-import KOLOR as K
 from storage import playlist, katalog, lagu_favorit, username_admin
 from read import tampilkan_katalog
 import os
@@ -37,18 +37,22 @@ def lagu_kembar(judul, penyanyi, genre, abaikan_id=None):
 
 
 def tambah_lagu_katalog():
-    judul = K.tanya_cyan("\nJudul lagu: ").strip()
-    penyanyi = K.tanya_magenta("Penyanyi: ").strip()
-    genre = K.tanya_hijau("Genre: ").strip()
+    print(Fore.CYAN + "\nJudul lagu: ", end="")
+    judul = input().strip()
+    print(Fore.MAGENTA + "Penyanyi: ", end="")
+    penyanyi = input().strip()
+    print(Fore.GREEN + "Genre: ", end="")
+    genre = input().strip()
+
     if judul == "" or penyanyi == "" or genre == "":
-        K.gagal("\nInput tidak boleh kosong.")
+        print(Fore.RED + "\n✘ Input tidak boleh kosong.")
     elif lagu_kembar(judul, penyanyi, genre):
-        K.gagal("\nLagu dengan judul, penyanyi, dan genre yang sama sudah ada di katalog.")
+        print(Fore.RED + "\n✘ Lagu dengan judul, penyanyi, dan genre yang sama sudah ada di katalog.")
     else:
         id_baru = storage.id_berikutnya
         katalog[id_baru] = {"judul": judul, "penyanyi": penyanyi, "genre": genre}
         storage.id_berikutnya += 1
-        K.sukses(f"\nLagu berhasil ditambahkan dengan ID {id_baru}.")
+        print(Fore.GREEN + f"\n✔ Lagu berhasil ditambahkan dengan ID {id_baru}.")
 
 def ubah_lagu_katalog():
     tampilkan_katalog()
@@ -56,19 +60,23 @@ def ubah_lagu_katalog():
         return
 
     try:
-        id_lagu = cari_id_lagu(K.tanya_yellow("\nMasukkan ID lagu yang ingin diubah: "))
+        print(Fore.YELLOW + "\nMasukkan ID lagu yang ingin diubah: ", end="")
+        id_lagu = cari_id_lagu(input())
     except IDTidakValid as pesan_error:
-        K.gagal(f"\n{pesan_error}")
+        print(Fore.RED + f"\n✘ {pesan_error}")
         return
 
     data = katalog[id_lagu]
-    K.info("\nKosongkan bagian jika tidak ingin mengubahnya.")
-    judul_baru = K.tanya_cyan(f"Judul baru untuk {data['judul']}: ").strip()
-    penyanyi_baru = K.tanya_magenta(f"Penyanyi baru untuk {data['penyanyi']}: ").strip()
-    genre_baru = K.tanya_hijau(f"Genre baru untuk {data['genre']}: ").strip()
+    print(Fore.BLUE + "\nℹ Kosongkan bagian jika tidak ingin mengubahnya.")
+    print(Fore.CYAN + f"Judul baru untuk {data['judul']}: ", end="")
+    judul_baru = input().strip()
+    print(Fore.MAGENTA + f"Penyanyi baru untuk {data['penyanyi']}: ", end="")
+    penyanyi_baru = input().strip()
+    print(Fore.GREEN + f"Genre baru untuk {data['genre']}: ", end="")
+    genre_baru = input().strip()
 
     if judul_baru == "" and penyanyi_baru == "" and genre_baru == "":
-        K.info("\nTidak ada yang diperbarui.")
+        print(Fore.BLUE + "\nℹ Tidak ada yang diperbarui.")
         return
 
     judul_akhir = judul_baru if judul_baru != "" else data["judul"]
@@ -76,12 +84,12 @@ def ubah_lagu_katalog():
     genre_akhir = genre_baru if genre_baru != "" else data["genre"]
 
     if lagu_kembar(judul_akhir, penyanyi_akhir, genre_akhir, abaikan_id=id_lagu):
-        K.gagal("\nLagu dengan judul, penyanyi, dan genre yang sama sudah ada di katalog.")
+        print(Fore.RED + "\n✘ Lagu dengan judul, penyanyi, dan genre yang sama sudah ada di katalog.")
     else:
         data["judul"] = judul_akhir
         data["penyanyi"] = penyanyi_akhir
         data["genre"] = genre_akhir
-        K.sukses("\nData lagu berhasil diperbarui.")
+        print(Fore.GREEN + "\n✔ Data lagu berhasil diperbarui.")
 
 
 def hapus_lagu_katalog():
@@ -90,9 +98,10 @@ def hapus_lagu_katalog():
         return
 
     try:
-        id_lagu = cari_id_lagu(K.tanya_merah("\nMasukkan ID lagu yang ingin dihapus: "))
+        print(Fore.RED + "\nMasukkan ID lagu yang ingin dihapus: ", end="")
+        id_lagu = cari_id_lagu(input())
     except IDTidakValid as pesan_error:
-        K.gagal(f"\n{pesan_error}")
+        print(Fore.RED + f"\n✘ {pesan_error}")
         return
 
     del katalog[id_lagu]
@@ -106,7 +115,7 @@ def hapus_lagu_katalog():
         if id_lagu in lagu_favorit[data_user]:
             del lagu_favorit[data_user][id_lagu]
 
-    K.sukses("\nLagu berhasil dihapus dari katalog.")
+    print(Fore.GREEN + "\n✔ Lagu berhasil dihapus dari katalog.")
 
 
 def menu_admin():
@@ -148,15 +157,16 @@ def menu_admin():
 
             elif menu == "5. Logout":
                 storage.username_aktif = ""
-                K.sukses("\nTerima kasih dan sampai jumpa!.")
+                print(Fore.GREEN + "\n✔ Terima kasih dan sampai jumpa!.")
                 time.sleep(3)
                 break
 
             else:
-                K.gagal("\nPilihan tidak tersedia.")
+                print(Fore.RED + "\n✘ Pilihan tidak tersedia.")
 
         except Exception as pesan_error:
-            K.gagal(f"\nTerjadi kesalahan: {pesan_error}")
+            print(Fore.RED + f"\n✘ Terjadi kesalahan: {pesan_error}")
         finally:
             if menu != "5. Logout":
-                K.tanya_putih("\nEnter untuk kembali...")
+                print(Fore.WHITE + "\nEnter untuk kembali...", end="")
+                input()

@@ -1,8 +1,8 @@
 import time
 import inquirer
 from inquirer.themes import GreenPassion
+from colorama import Fore, Style
 import storage
-import KOLOR as K
 from prettytable import PrettyTable
 from storage import playlist, katalog, lagu_favorit
 from read import tampilkan_katalog, tampilkan_playlist_user
@@ -34,24 +34,25 @@ def tampilkan_lagu_playlist(nama_playlist):
     tabel = buat_tabel_lagu(playlist_saya()[nama_playlist])
 
     if len(tabel.rows) == 0:
-        K.kosong("\nPlaylist ini belum memiliki lagu!")
+        print(Style.DIM + "\nPlaylist ini belum memiliki lagu!")
     else:
-        K.judul(f"\n=== PLAYLIST: {nama_playlist} ===")
-        K.cetak_tabel(tabel)
+        print(Fore.CYAN + f"\n=== PLAYLIST: {nama_playlist} ===")
+        print(Fore.LIGHTCYAN_EX + str(tabel))
 
 def tampilkan_lagu_favorit():
-    K.judul("\n=== DAFTAR LAGU FAVORIT ===")
+    print(Fore.CYAN + "\n=== DAFTAR LAGU FAVORIT ===")
     tabel = buat_tabel_lagu(favorit_saya())
     if len(tabel.rows) == 0:
-        K.kosong("Belum ada lagu favorit.")
+        print(Style.DIM + "Belum ada lagu favorit.")
     else:
-        K.cetak_tabel(tabel)
+        print(Fore.LIGHTCYAN_EX + str(tabel))
 
 def pilih_playlist(pesan):
-    K.judul("\n=== PILIH PLAYLIST ===")
+    print(Fore.CYAN + "\n=== PILIH PLAYLIST ===")
     for nama_playlist in playlist_saya():
-        K.daftar("- " + nama_playlist)
-    return cari_nama_playlist(K.tanya_yellow(pesan))
+        print(Fore.MAGENTA + "- " + nama_playlist)
+    print(Fore.YELLOW + pesan, end="")
+    return cari_nama_playlist(input())
 
 def menu_favorit():
     while True:
@@ -76,29 +77,28 @@ def menu_favorit():
         try:
             if menu == "1. Tambah lagu favorit":
                 if len(playlist_saya()) == 0:
-                    K.kosong("\nKamu belum memiliki playlist.")
+                    print(Style.DIM + "\nKamu belum memiliki playlist.")
                 else:
                     nama_asli = pilih_playlist("\nNama playlist sumber: ")
 
                     if nama_asli == "":
-                        K.gagal("\nPlaylist tidak ditemukan.")
+                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
                     else:
                         tampilkan_lagu_playlist(nama_asli)
 
                         try:
-                            id_lagu = cari_id_lagu(
-                                K.tanya_cyan("\nID lagu yang ingin dijadikan favorit: ")
-                            )
+                            print(Fore.CYAN + "\nID lagu yang ingin dijadikan favorit: ", end="")
+                            id_lagu = cari_id_lagu(input())
                         except IDTidakValid as pesan_error:
-                            K.gagal(f"\n{pesan_error}")
+                            print(Fore.RED + f"\n✘ {pesan_error}")
                         else:
                             if id_lagu not in playlist_saya()[nama_asli]:
-                                K.gagal("\nLagu tersebut tidak ada di playlist yang dipilih.")
+                                print(Fore.RED + "\n✘ Lagu tersebut tidak ada di playlist yang dipilih.")
                             elif id_lagu in favorit_saya():
-                                K.peringatan("\nLagu sudah ada di daftar favorit.")
+                                print(Fore.YELLOW + "\n⚠ Lagu sudah ada di daftar favorit.")
                             else:
                                 favorit_saya()[id_lagu] = True
-                                K.sukses("\nLagu berhasil ditambahkan ke favorit.")
+                                print(Fore.GREEN + "\n✔ Lagu berhasil ditambahkan ke favorit.")
 
             elif menu == "2. Lihat lagu favorit":
                 tampilkan_lagu_favorit()
@@ -108,23 +108,25 @@ def menu_favorit():
 
                 if len(favorit_saya()) > 0:
                     try:
-                        id_hapus = ubah_ke_angka(K.tanya_merah("\nID lagu favorit yang ingin dihapus: "))
+                        print(Fore.RED + "\nID lagu favorit yang ingin dihapus: ", end="")
+                        id_hapus = ubah_ke_angka(input())
                         del favorit_saya()[id_hapus]
                     except IDTidakValid as pesan_error:
-                        K.gagal(f"\n{pesan_error}")
+                        print(Fore.RED + f"\n✘ {pesan_error}")
                     except KeyError:
-                        K.gagal("\nID lagu tidak ditemukan di daftar favorit.")
+                        print(Fore.RED + "\n✘ ID lagu tidak ditemukan di daftar favorit.")
                     else:
-                        K.sukses("\nLagu berhasil dihapus dari favorit.")
+                        print(Fore.GREEN + "\n✔ Lagu berhasil dihapus dari favorit.")
 
             elif menu == "4. Kembali":
                 break
 
         except Exception as pesan_error:
-            K.gagal(f"\nTerjadi kesalahan: {pesan_error}")
+            print(Fore.RED + f"\n✘ Terjadi kesalahan: {pesan_error}")
         finally:
             if menu != "4. Kembali":
-                K.tanya_putih("\nEnter untuk kembali...")
+                print(Fore.WHITE + "\nEnter untuk kembali...", end="")
+                input()
 
 def menu_user():
     playlist_saya()
@@ -154,67 +156,70 @@ def menu_user():
 
         try:
             if menu == "1. Buat playlist":
-                nama_playlist = K.tanya_magenta("\nNama playlist Anda: ").strip()
+                print(Fore.MAGENTA + "\nNama playlist Anda: ", end="")
+                nama_playlist = input().strip()
 
                 if nama_playlist == "":
-                    K.gagal("\nNama playlist tidak boleh kosong.")
+                    print(Fore.RED + "\n✘ Nama playlist tidak boleh kosong.")
                 elif cari_nama_playlist(nama_playlist) != "":
-                    K.gagal("\nNama playlist itu sudah ada.")
+                    print(Fore.RED + "\n✘ Nama playlist itu sudah ada.")
                 else:
                     playlist_saya()[nama_playlist] = {}
-                    K.sukses("\nPlaylist berhasil dibuat!")
+                    print(Fore.GREEN + "\n✔ Playlist berhasil dibuat!")
 
             elif menu == "2. Lihat playlist":
                 tampilkan_playlist_user()
 
             elif menu == "3. Tambah lagu ke playlist":
                 if len(playlist_saya()) == 0:
-                    K.kosong("\nKamu belum membuat playlist.")
+                    print(Style.DIM + "\nKamu belum membuat playlist.")
                 else:
                     nama_asli = pilih_playlist("\nNama playlist tujuan: ")
 
                     if nama_asli == "":
-                        K.gagal("\nPlaylist tidak ditemukan.")
+                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
                     else:
                         tampilkan_katalog()
 
                         try:
-                            id_lagu = cari_id_lagu(K.tanya_hijau("\nID lagu yang ingin ditambahkan: "))
+                            print(Fore.GREEN + "\nID lagu yang ingin ditambahkan: ", end="")
+                            id_lagu = cari_id_lagu(input())
                         except IDTidakValid as pesan_error:
-                            K.gagal(f"\n{pesan_error}")
+                            print(Fore.RED + f"\n✘ {pesan_error}")
                         else:
                             if id_lagu in playlist_saya()[nama_asli]:
-                                K.peringatan("\nLagu sudah ada di playlist.")
+                                print(Fore.YELLOW + "\n⚠ Lagu sudah ada di playlist.")
                             else:
                                 playlist_saya()[nama_asli][id_lagu] = True
-                                K.sukses("\nLagu berhasil ditambahkan.")
+                                print(Fore.GREEN + "\n✔ Lagu berhasil ditambahkan.")
 
             elif menu == "4. Hapus lagu dari playlist":
                 if len(playlist_saya()) == 0:
-                    K.kosong("\nKamu belum membuat playlist.")
+                    print(Style.DIM + "\nKamu belum membuat playlist.")
                 else:
                     nama_asli = pilih_playlist("\nNama playlist tujuan: ")
 
                     if nama_asli == "":
-                        K.gagal("\nPlaylist tidak ditemukan.")
+                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
                     else:
                         daftar_lagu = playlist_saya()[nama_asli]
-                        K.judul(f"\n=== PLAYLIST: {nama_asli} ===")
+                        print(Fore.CYAN + f"\n=== PLAYLIST: {nama_asli} ===")
 
                         if len(daftar_lagu) == 0:
-                            K.kosong("Playlist ini belum memiliki lagu.")
+                            print(Style.DIM + "Playlist ini belum memiliki lagu.")
                         else:
-                            K.cetak_tabel(buat_tabel_lagu(daftar_lagu))
+                            print(Fore.LIGHTCYAN_EX + str(buat_tabel_lagu(daftar_lagu)))
 
                             try:
-                                id_hapus = ubah_ke_angka(K.tanya_merah("\nID lagu yang ingin dihapus: "))
+                                print(Fore.RED + "\nID lagu yang ingin dihapus: ", end="")
+                                id_hapus = ubah_ke_angka(input())
                                 del daftar_lagu[id_hapus]
                             except IDTidakValid as pesan_error:
-                                K.gagal(f"\n{pesan_error}")
+                                print(Fore.RED + f"\n✘ {pesan_error}")
                             except KeyError:
-                                K.gagal("\nID lagu tidak ditemukan di playlist.")
+                                print(Fore.RED + "\n✘ ID lagu tidak ditemukan di playlist.")
                             else:
-                                K.sukses("\nLagu berhasil dihapus dari playlist.")
+                                print(Fore.GREEN + "\n✔ Lagu berhasil dihapus dari playlist.")
 
             elif menu == "5. Lagu favorit":
                 menu_favorit()
@@ -222,15 +227,16 @@ def menu_user():
 
             elif menu == "6. Logout":
                 storage.username_aktif = ""
-                K.sukses("\nTerima kasih dan sampai jumpa!")
+                print(Fore.GREEN + "\n✔ Terima kasih dan sampai jumpa!")
                 time.sleep(3)
                 break
 
             else:
-                K.gagal("Pilihan tidak tersedia.")
+                print(Fore.RED + "✘ Pilihan tidak tersedia.")
 
         except Exception as pesan_error:
-            K.gagal(f"\nTerjadi kesalahan: {pesan_error}")
+            print(Fore.RED + f"\n✘ Terjadi kesalahan: {pesan_error}")
         finally:
             if menu not in ("5. Lagu favorit", "6. Logout"):
-                K.tanya_putih("\nEnter untuk kembali...")
+                print(Fore.WHITE + "\nEnter untuk kembali...", end="")
+                input()
