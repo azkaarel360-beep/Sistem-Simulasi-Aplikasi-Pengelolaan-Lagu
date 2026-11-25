@@ -37,36 +37,29 @@ def tampilkan_katalog():
             tabel.add_row([id_lagu, katalog[id_lagu]["judul"], katalog[id_lagu]["penyanyi"], katalog[id_lagu]["genre"]])
         print(Fore.LIGHTCYAN_EX + str(tabel))
 
-def tampilkan_playlist_user():
-    print(Fore.CYAN + "\n=== PLAYLIST SAYA ===")
-
+def tampilkan_playlist_user(nama_playlist):
     username = storage.username_aktif
 
-    if username not in playlist or len(playlist[username]) == 0:
-        print(Style.DIM + "Kamu belum membuat playlist.")
-        return
+    print(Fore.MAGENTA + f"\n=== PLAYLIST: {nama_playlist} ===")
 
-    for nama_playlist in playlist[username]:
-        print(Fore.MAGENTA + f"\n=== PLAYLIST: {nama_playlist} ===")
+    daftar_lagu = playlist[username][nama_playlist]
 
-        daftar_lagu = playlist[username][nama_playlist]
+    if len(daftar_lagu) == 0:
+        print(Style.DIM + "Playlist Anda belum ada lagu.")
+    else:
+        tabel = PrettyTable()
+        tabel.field_names = ["ID", "Judul", "Penyanyi", "Genre"]
 
-        if len(daftar_lagu) == 0:
-            print(Style.DIM + "Playlist Anda belum ada lagu.")
-        else:
-            tabel = PrettyTable()
-            tabel.field_names = ["ID", "Judul", "Penyanyi", "Genre"]
+        for id_lagu in daftar_lagu:
+            if id_lagu in katalog:
+                data = katalog[id_lagu]
 
-            for id_lagu in daftar_lagu:
-                if id_lagu in katalog:
-                    data = katalog[id_lagu]
-
-                    tabel.add_row([
-                        id_lagu,
-                        data["judul"],
-                        data["penyanyi"],
-                        data["genre"]
-                    ])
+                tabel.add_row([
+                    id_lagu,
+                    data["judul"],
+                    data["penyanyi"],
+                    data["genre"]
+                ])
 
             if len(tabel.rows) > 0:
                 print(Fore.LIGHTCYAN_EX + str(tabel))

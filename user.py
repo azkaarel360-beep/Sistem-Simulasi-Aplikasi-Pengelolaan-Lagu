@@ -168,7 +168,15 @@ def menu_user():
                     print(Fore.GREEN + "\n✔ Playlist berhasil dibuat!")
 
             elif menu == "2. Lihat playlist":
-                tampilkan_playlist_user()
+                if len(playlist_saya()) == 0:
+                    print(Style.DIM + "\nKamu belum membuat playlist.")
+                else:
+                    nama_asli = pilih_playlist("\nNama playlist tujuan: ")
+                
+                    if nama_asli == "":
+                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
+                    else:
+                        tampilkan_playlist_user(nama_asli)
 
             elif menu == "3. Tambah lagu ke playlist":
                 if len(playlist_saya()) == 0:
