@@ -54,6 +54,123 @@ def pilih_playlist(pesan):
     print(Fore.YELLOW + pesan, end="")
     return cari_nama_playlist(input())
 
+def menu_kelola_playlist():
+    while True:
+        os.system("cls" if os.name == "nt" else "clear")
+        pertanyaan = [
+            inquirer.List(
+                "menu",
+                message="=== MENU KELOLA PLAYLIST ===",
+                choices=[
+                    "1. Ganti nama playlist",
+                    "2. Hapus playlist",
+                    "3. Tambah lagu ke playlist",
+                    "4. Hapus lagu dari playlist",
+                    "5. Kembali"
+                ]
+            )
+        ]
+        jawaban = inquirer.prompt(pertanyaan, theme=GreenPassion())
+        if jawaban is None:
+            break
+        menu = jawaban["menu"]
+
+        try:
+            if menu == "1. Ganti nama playlist":
+                if len(playlist_saya()) == 0:
+                    print(Style.DIM + "\nKamu belum membuat playlist.")
+                else:
+                    nama_asli = pilih_playlist("\nNama playlist yang ingin diganti: ")
+
+                    if nama_asli == "":
+                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
+                    else:
+                        print(Fore.CYAN + "\nNama playlist baru: ", end="")
+                        nama_baru = input().strip()
+
+                        if nama_baru == "":
+                            print(Fore.RED + "\n✘ Nama playlist tidak boleh kosong.")
+                        elif cari_nama_playlist(nama_baru) != "":
+                            print(Fore.RED + "\n✘ Nama playlist itu sudah ada.")
+                        else:
+                            playlist_saya()[nama_baru] = playlist_saya().pop(nama_asli)
+                            print(Fore.GREEN + "\n✔ Nama playlist berhasil diganti!")
+            
+            elif menu == "2. Hapus playlist":
+                if len(playlist_saya()) == 0:
+                    print(Style.DIM + "\nKamu belum membuat playlist.")
+                else:
+                    nama_asli = pilih_playlist("\nNama playlist yang ingin dihapus: ")
+
+                    if nama_asli == "":
+                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
+                    else:
+                        del playlist_saya()[nama_asli]
+                        print(Fore.GREEN + "\n✔ Playlist berhasil dihapus!")
+
+            elif menu == "3. Tambah lagu ke playlist":
+                if len(playlist_saya()) == 0:
+                    print(Style.DIM + "\nKamu belum membuat playlist.")
+                elif len(katalog) == 0:
+                    print(Style.DIM + "\nKatalog masih kosong, belum ada lagu yang bisa ditambahkan.")
+                else:
+                    nama_asli = pilih_playlist("\nNama playlist tujuan: ")
+            
+                    if nama_asli == "":
+                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
+                    else:
+                        tampilkan_katalog()
+            
+                        try:
+                            print(Fore.GREEN + "\nID lagu yang ingin ditambahkan: ", end="")
+                            id_lagu = cari_id_lagu(input())
+                        except IDTidakValid as pesan_error:
+                            print(Fore.RED + f"\n✘ {pesan_error}")
+                        else:
+                            if id_lagu in playlist_saya()[nama_asli]:
+                                print(Fore.YELLOW + "\n⚠ Lagu sudah ada di playlist.")
+                            else:
+                                playlist_saya()[nama_asli][id_lagu] = True
+                                print(Fore.GREEN + "\n✔ Lagu berhasil ditambahkan.")
+
+            elif menu == "4. Hapus lagu dari playlist":
+                if len(playlist_saya()) == 0:
+                    print(Style.DIM + "\nKamu belum membuat playlist.")
+                else:
+                    nama_asli = pilih_playlist("\nNama playlist tujuan: ")
+            
+                    if nama_asli == "":
+                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
+                    else:
+                        daftar_lagu = playlist_saya()[nama_asli]
+                        print(Fore.CYAN + f"\n=== PLAYLIST: {nama_asli} ===")
+            
+                        if len(daftar_lagu) == 0:
+                            print(Style.DIM + "Playlist ini belum memiliki lagu.")
+                        else:
+                            print(Fore.LIGHTCYAN_EX + str(buat_tabel_lagu(daftar_lagu)))
+            
+                            try:
+                                print(Fore.RED + "\nID lagu yang ingin dihapus: ", end="")
+                                id_hapus = ubah_ke_angka(input())
+                                del daftar_lagu[id_hapus]
+                            except IDTidakValid as pesan_error:
+                                print(Fore.RED + f"\n✘ {pesan_error}")
+                            except KeyError:
+                                print(Fore.RED + "\n✘ ID lagu tidak ditemukan di playlist.")
+                            else:
+                                print(Fore.GREEN + "\n✔ Lagu berhasil dihapus dari playlist.")
+
+            elif menu == "5. Kembali":
+                break
+
+        except Exception as pesan_error:
+            print(Fore.RED + f"\n✘ Terjadi kesalahan: {pesan_error}")
+        finally:
+            if menu != "5. Kembali":
+                print(Fore.WHITE + "\nEnter untuk kembali...", end="")
+                input()
+
 def menu_favorit():
     while True:
         os.system("cls" if os.name == "nt" else "clear")
@@ -145,10 +262,9 @@ def menu_user():
                 choices=[
                     "1. Buat playlist",
                     "2. Lihat playlist",
-                    "3. Tambah lagu ke playlist",
-                    "4. Hapus lagu dari playlist",
-                    "5. Lagu favorit",
-                    "6. Logout"
+                    "3. Kelola playlist",
+                    "4. Lagu favorit",
+                    "5. Logout"
                 ]
             )
         ]
@@ -182,64 +298,15 @@ def menu_user():
                     else:
                         tampilkan_playlist_user(nama_asli)
 
-            elif menu == "3. Tambah lagu ke playlist":
-                if len(playlist_saya()) == 0:
-                    print(Style.DIM + "\nKamu belum membuat playlist.")
-                elif len(katalog) == 0:
-                    print(Style.DIM + "\nKatalog masih kosong, belum ada lagu yang bisa ditambahkan.")
-                else:
-                    nama_asli = pilih_playlist("\nNama playlist tujuan: ")
+            elif menu == "3. Kelola playlist":
+                menu_kelola_playlist()
+                continue
 
-                    if nama_asli == "":
-                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
-                    else:
-                        tampilkan_katalog()
-
-                        try:
-                            print(Fore.GREEN + "\nID lagu yang ingin ditambahkan: ", end="")
-                            id_lagu = cari_id_lagu(input())
-                        except IDTidakValid as pesan_error:
-                            print(Fore.RED + f"\n✘ {pesan_error}")
-                        else:
-                            if id_lagu in playlist_saya()[nama_asli]:
-                                print(Fore.YELLOW + "\n⚠ Lagu sudah ada di playlist.")
-                            else:
-                                playlist_saya()[nama_asli][id_lagu] = True
-                                print(Fore.GREEN + "\n✔ Lagu berhasil ditambahkan.")
-
-            elif menu == "4. Hapus lagu dari playlist":
-                if len(playlist_saya()) == 0:
-                    print(Style.DIM + "\nKamu belum membuat playlist.")
-                else:
-                    nama_asli = pilih_playlist("\nNama playlist tujuan: ")
-
-                    if nama_asli == "":
-                        print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
-                    else:
-                        daftar_lagu = playlist_saya()[nama_asli]
-                        print(Fore.CYAN + f"\n=== PLAYLIST: {nama_asli} ===")
-
-                        if len(daftar_lagu) == 0:
-                            print(Style.DIM + "Playlist ini belum memiliki lagu.")
-                        else:
-                            print(Fore.LIGHTCYAN_EX + str(buat_tabel_lagu(daftar_lagu)))
-
-                            try:
-                                print(Fore.RED + "\nID lagu yang ingin dihapus: ", end="")
-                                id_hapus = ubah_ke_angka(input())
-                                del daftar_lagu[id_hapus]
-                            except IDTidakValid as pesan_error:
-                                print(Fore.RED + f"\n✘ {pesan_error}")
-                            except KeyError:
-                                print(Fore.RED + "\n✘ ID lagu tidak ditemukan di playlist.")
-                            else:
-                                print(Fore.GREEN + "\n✔ Lagu berhasil dihapus dari playlist.")
-
-            elif menu == "5. Lagu favorit":
+            elif menu == "4. Lagu favorit":
                 menu_favorit()
                 continue
 
-            elif menu == "6. Logout":
+            elif menu == "5. Logout":
                 storage.username_aktif = ""
                 print(Fore.GREEN + "\n✔ Terima kasih dan sampai jumpa!")
                 time.sleep(3)
