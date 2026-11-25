@@ -20,7 +20,7 @@ def autentikasi_login():
             password = input().strip()
 
             if username == "" or password == "":
-                raise ValueError("Username dan password tidak boleh kosong.")
+                raise ValueError("Username atau password tidak boleh kosong.")
 
             nama_login = cari_akun(username, password)
 
