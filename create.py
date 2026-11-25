@@ -1,11 +1,13 @@
-import KOLOR as K
+from colorama import Fore
 from storage import akun, playlist, lagu_favorit
 
 
 def buat_akun_baru():
     try:
-        username_baru = K.tanya_cyan("\nBuat username: ").strip()
-        password_baru = K.tanya_magenta("Buat password (minimal 8 karakter dan mengandung minimal 1 angka): ").strip()
+        print(Fore.CYAN + "\nBuat username: ", end="")
+        username_baru = input().strip()
+        print(Fore.MAGENTA + "Buat password (minimal 8 karakter dan mengandung minimal 1 angka): ", end="")
+        password_baru = input().strip()
 
         if username_baru == "" or password_baru == "":
             raise ValueError("Username dan password tidak boleh kosong.")
@@ -25,8 +27,9 @@ def buat_akun_baru():
         lagu_favorit[username_baru] = {}
 
     except ValueError as pesan_error:
-        K.gagal(f"\n{pesan_error}")
+        print(Fore.RED + f"\n✘ {pesan_error}")
     else:
-        K.sukses("\nRegistrasi berhasil! Silakan login.")
+        print(Fore.GREEN + "\n✔ Registrasi berhasil! Silakan login.")
     finally:
-        K.tanya_putih("Enter untuk kembali...")
+        print(Fore.WHITE + "Enter untuk kembali...", end="")
+        input()

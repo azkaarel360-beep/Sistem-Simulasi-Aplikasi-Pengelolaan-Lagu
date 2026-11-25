@@ -1,14 +1,14 @@
 import inquirer
 from inquirer.themes import BlueComposure
 from prettytable import PrettyTable
-import storage 
-import KOLOR as K
+from colorama import Fore, Style
+import storage
 from storage import katalog, playlist
 import os
 
 def tampilkan_menu_awal():
     os.system("cls" if os.name == "nt" else "clear")
-    pertanyaan = [ 
+    pertanyaan = [
         inquirer.List(
             "pilihan",
             message="=== MENU AWAL ===",
@@ -24,35 +24,35 @@ def tampilkan_menu_awal():
         raise KeyboardInterrupt
 
     pilihan = jawaban["pilihan"]
-    return pilihan[0] 
+    return pilihan[0]
 
 def tampilkan_katalog():
-    K.judul("\n=== KATALOG LAGU ===")
+    print(Fore.CYAN + "\n=== KATALOG LAGU ===")
     if len(katalog) == 0:
-        K.kosong("Katalog masih kosong.")
+        print(Style.DIM + "Katalog masih kosong.")
     else:
         tabel = PrettyTable()
         tabel.field_names = ["ID", "Judul", "Penyanyi", "Genre"]
         for id_lagu in katalog:
             tabel.add_row([id_lagu, katalog[id_lagu]["judul"], katalog[id_lagu]["penyanyi"], katalog[id_lagu]["genre"]])
-        K.cetak_tabel(tabel)
+        print(Fore.LIGHTCYAN_EX + str(tabel))
 
 def tampilkan_playlist_user():
-    K.judul("\n=== PLAYLIST SAYA ===")
+    print(Fore.CYAN + "\n=== PLAYLIST SAYA ===")
 
     username = storage.username_aktif
 
     if username not in playlist or len(playlist[username]) == 0:
-        K.kosong("Kamu belum membuat playlist.")
+        print(Style.DIM + "Kamu belum membuat playlist.")
         return
 
     for nama_playlist in playlist[username]:
-        K.daftar(f"\n=== PLAYLIST: {nama_playlist} ===")
+        print(Fore.MAGENTA + f"\n=== PLAYLIST: {nama_playlist} ===")
 
         daftar_lagu = playlist[username][nama_playlist]
 
         if len(daftar_lagu) == 0:
-            K.kosong("Playlist Anda belum ada lagu.")
+            print(Style.DIM + "Playlist Anda belum ada lagu.")
         else:
             tabel = PrettyTable()
             tabel.field_names = ["ID", "Judul", "Penyanyi", "Genre"]
@@ -69,6 +69,6 @@ def tampilkan_playlist_user():
                     ])
 
             if len(tabel.rows) > 0:
-                K.cetak_tabel(tabel)
+                print(Fore.LIGHTCYAN_EX + str(tabel))
             else:
-                K.kosong("Tidak ada lagu yang tersedia di katalog.")
+                print(Style.DIM + "Tidak ada lagu yang tersedia di katalog.")
