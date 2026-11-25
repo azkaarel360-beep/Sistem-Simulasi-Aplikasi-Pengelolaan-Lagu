@@ -168,23 +168,26 @@ def menu_user():
                 tampilkan_playlist_user()
 
             elif menu == "3. Tambah lagu ke playlist":
-                nama_asli = pilih_playlist("\nNama playlist tujuan: ")
-
-                if nama_asli == "":
-                    K.gagal("\nPlaylist tidak ditemukan.")
+                if len(playlist_saya()) == 0:
+                    K.kosong("\nKamu belum membuat playlist.")
                 else:
-                    tampilkan_katalog()
+                    nama_asli = pilih_playlist("\nNama playlist tujuan: ")
 
-                    try:
-                        id_lagu = cari_id_lagu(K.tanya_hijau("\nID lagu yang ingin ditambahkan: "))
-                    except IDTidakValid as pesan_error:
-                        K.gagal(f"\n{pesan_error}")
+                    if nama_asli == "":
+                        K.gagal("\nPlaylist tidak ditemukan.")
                     else:
-                        if id_lagu in playlist_saya()[nama_asli]:
-                            K.peringatan("\nLagu sudah ada di playlist.")
+                        tampilkan_katalog()
+
+                        try:
+                            id_lagu = cari_id_lagu(K.tanya_hijau("\nID lagu yang ingin ditambahkan: "))
+                        except IDTidakValid as pesan_error:
+                            K.gagal(f"\n{pesan_error}")
                         else:
-                            playlist_saya()[nama_asli][id_lagu] = True
-                            K.sukses("\nLagu berhasil ditambahkan.")
+                            if id_lagu in playlist_saya()[nama_asli]:
+                                K.peringatan("\nLagu sudah ada di playlist.")
+                            else:
+                                playlist_saya()[nama_asli][id_lagu] = True
+                                K.sukses("\nLagu berhasil ditambahkan.")
 
             elif menu == "4. Hapus lagu dari playlist":
                 if len(playlist_saya()) == 0:
