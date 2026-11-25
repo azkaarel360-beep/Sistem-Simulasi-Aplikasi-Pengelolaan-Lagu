@@ -92,6 +92,36 @@ def ubah_lagu_katalog():
         print(Fore.GREEN + "\n✔ Data lagu berhasil diperbarui.")
 
 
+def susun_ulang_id():
+    """Nomor ID katalog dirapikan lagi jadi 1, 2, 3, ... berurutan.
+    ID di playlist dan favorit semua user ikut disesuaikan."""
+    id_lama_ke_baru = {}
+    nomor = 1
+    for id_lama in sorted(katalog):
+        id_lama_ke_baru[id_lama] = nomor
+        nomor += 1
+
+    data_katalog = dict(katalog)
+    katalog.clear()
+    for id_lama in id_lama_ke_baru:
+        katalog[id_lama_ke_baru[id_lama]] = data_katalog[id_lama]
+
+    for data_user in playlist:
+        for nama_playlist in playlist[data_user]:
+            isi_lama = dict(playlist[data_user][nama_playlist])
+            playlist[data_user][nama_playlist].clear()
+            for id_lama in isi_lama:
+                playlist[data_user][nama_playlist][id_lama_ke_baru[id_lama]] = True
+
+    for data_user in lagu_favorit:
+        isi_lama = dict(lagu_favorit[data_user])
+        lagu_favorit[data_user].clear()
+        for id_lama in isi_lama:
+            lagu_favorit[data_user][id_lama_ke_baru[id_lama]] = True
+
+    storage.id_berikutnya = len(katalog) + 1
+
+
 def hapus_lagu_katalog():
     tampilkan_katalog()
     if len(katalog) == 0:
@@ -114,6 +144,8 @@ def hapus_lagu_katalog():
     for data_user in lagu_favorit:
         if id_lagu in lagu_favorit[data_user]:
             del lagu_favorit[data_user][id_lagu]
+
+    susun_ulang_id()
 
     print(Fore.GREEN + "\n✔ Lagu berhasil dihapus dari katalog.")
 
