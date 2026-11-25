@@ -78,11 +78,15 @@ def menu_favorit():
             if menu == "1. Tambah lagu favorit":
                 if len(playlist_saya()) == 0:
                     print(Style.DIM + "\nKamu belum memiliki playlist.")
+                elif not any(len(isi) > 0 for isi in playlist_saya().values()):
+                    print(Style.DIM + "\nSemua playlist kamu masih kosong, belum ada lagu yang bisa dijadikan favorit.")
                 else:
                     nama_asli = pilih_playlist("\nNama playlist sumber: ")
 
                     if nama_asli == "":
                         print(Fore.RED + "\n✘ Playlist tidak ditemukan.")
+                    elif len(playlist_saya()[nama_asli]) == 0:
+                        print(Style.DIM + "\nPlaylist ini belum memiliki lagu!")
                     else:
                         tampilkan_lagu_playlist(nama_asli)
 
@@ -181,6 +185,8 @@ def menu_user():
             elif menu == "3. Tambah lagu ke playlist":
                 if len(playlist_saya()) == 0:
                     print(Style.DIM + "\nKamu belum membuat playlist.")
+                elif len(katalog) == 0:
+                    print(Style.DIM + "\nKatalog masih kosong, belum ada lagu yang bisa ditambahkan.")
                 else:
                     nama_asli = pilih_playlist("\nNama playlist tujuan: ")
 
