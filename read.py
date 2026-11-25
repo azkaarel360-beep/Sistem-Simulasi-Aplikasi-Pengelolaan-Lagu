@@ -61,7 +61,7 @@ def tampilkan_playlist_user(nama_playlist):
                     data["genre"]
                 ])
 
-            if len(tabel.rows) > 0:
-                print(Fore.LIGHTCYAN_EX + str(tabel))
-            else:
-                print(Style.DIM + "Tidak ada lagu yang tersedia di katalog.")
+        if len(tabel.rows) > 0:
+            print(Fore.LIGHTCYAN_EX + str(tabel))
+        else:
+            print(Style.DIM + "Tidak ada lagu yang tersedia di katalog.")
