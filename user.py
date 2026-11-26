@@ -318,6 +318,6 @@ def menu_user():
         except Exception as pesan_error:
             print(Fore.RED + f"\n✘ Terjadi kesalahan: {pesan_error}")
         finally:
-            if menu not in ("5. Lagu favorit", "6. Logout"):
+            if menu not in ("4. Lagu favorit", "5. Logout"):
                 print(Fore.WHITE + "\nEnter untuk kembali...", end="")
                 input()
