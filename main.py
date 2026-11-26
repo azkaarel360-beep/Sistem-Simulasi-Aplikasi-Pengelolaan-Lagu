@@ -27,7 +27,7 @@ try:
             buat_akun_baru()
 
         elif pilihan == "3":
-            print(Fore.GREEN + "\n✔ Terima kasih dan sampai jumpa")
+            print(Fore.GREEN + "\n✔ Terima kasih dan sampai jumpa!")
             time.sleep(3)
             break
 
